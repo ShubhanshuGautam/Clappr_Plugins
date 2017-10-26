@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>clappr-plugin</title>
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  </head>
+  <body>
+
+    <div id="player"></div>
+    <script type="text/javascript" charset="utf-8" src="./node_modules/clappr/dist/clappr.js"> </script>
+    <script type="text/javascript" charset="utf-8" src="./dist/EspxSocial.min.js"> </script>
+    <script type="text/javascript" charset="utf-8">
+      p = new Clappr.Player({
+        source: 'http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4',
+        shareURL:'https://github.com/clappr/clappr/wiki/Architecture',
+        height: 440,
+        width: 640,
+        plugins: [EspxSocial],
+        parentId: '#player',
+      });
+    </script>
+  </body>
+</html>
