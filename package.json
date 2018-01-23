@@ -1,0 +1,42 @@
+{
+  "name": "EspxSocial",
+  "version": "0.0.1",
+  "description": "Plugin for Social integration",
+  "main": "dist/EspxSocial.min.js",
+  "dependencies": {
+    "clappr": "^0.2.58",
+    "deepstream.io-client-js": "^2.3.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.7.6",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015-rollup": "^1.1.1",
+    "rollup": "^0.33.0",
+    "rollup-plugin-babel": "^2.6.1",
+    "rollup-plugin-commonjs": "^3.0.2",
+    "rollup-plugin-eslint": "^4.0.0",
+    "rollup-plugin-image": "^1.0.2",
+    "rollup-plugin-node-resolve": "^1.7.1",
+    "rollup-plugin-strip": "^1.1.1",
+    "rollup-plugin-uglify": "^1.0.1",
+    "sinon": "^1.17.3",
+    "uglify-js": "^2.6.4"
+  },
+  "scripts": {
+    "build": "node_modules/.bin/rollup -c",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shubhanshu.git"
+  },
+  "keywords": [
+    "clappr"
+  ],
+  "author": "Shubhanshu <Shubhanshu@gmail.com>",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/Shubhanshu/issues"
+  },
+  "homepage": "https://github.com/Shubhanshu#readme"
+}
