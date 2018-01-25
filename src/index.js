@@ -117,7 +117,8 @@ export default class EspxWhiteboard extends UICorePlugin {
 		return{
 			'click [data-open-wb]': 'openWB',
 			'click [data-close-wb]': 'closeWB',
-			'click [data-clear-wb]': 'clearCanvas',
+			'click [data-clear-wb]': 'emitClear',
+			//'click [data-clear-wb]': 'clearCanvas',
 		}
 	}
 
@@ -184,14 +185,16 @@ export default class EspxWhiteboard extends UICorePlugin {
 
 	  // ~~~~~~~~~~ DEEPSTREAM ~~~~~~~~~
 	  setupDeepstream(){
-	  	//console.log(deepstream);
+	  	console.log(deepstream);
 	  	this.dsClient = deepstream('localhost:6020').login();
-	    //console.log(this.dsClient);
+	    console.log(this.dsClient);
 	    this.recordPts = this.dsClient.record.getRecord(this.progId + '/drawing');
 	    // TODO ---
 	    this.recordPts.subscribe( 'allpts', this.initDrawing.bind(this)); // update sync'd drawing
 
 	    // use pub sub emit for all clear
+	    //this.dsClient.on( 'allclr', this.clearCanvas.bind(this) );
+	    this.dsClient.event.subscribe( 'allclr', this.clearCanvas.bind(this) );
 	    //this.recordPts.subscribe( 'allclear', this.clearCanvas.bind(this)); // clear whiteboard
 	    //this.recordPts = this.dsClient.record.getRecord('drawing');
 	    //console.log(this.recordPts);
@@ -241,19 +244,28 @@ export default class EspxWhiteboard extends UICorePlugin {
 		this.context.restore();
 
 		
-
+/*
 		if( this.recordPts.get('allclear') && this.recordPts.get('allclear').count){
 			if(this.clearCount==this.recordPts.get('allclear').count){ return; }
 			this.clearCount = this.recordPts.get('allclear').count;
 		}else{
 			this.clearCount = 0;
 		}
-		//this.clearCount = this.recordPts.get('allclear').count?this.recordPts.get('allclear').count:0;
-		this.points=[]; // resetting history
+*/		
+		console.log('end clearCanvas-------');
+	  }
+
+	  emitClear(){
+	  	console.log('emit Clear -------');
+	  	//this.clearCount = this.recordPts.get('allclear').count?this.recordPts.get('allclear').count:0;
+		this.points=[]; // resetting local history
 		console.log(this.recordPts.get());
-		this.recordPts.set('allpts',[]);
-		this.recordPts.set('allclear',{count: this.clearCount + 1 });
+		this.recordPts.set('allpts',[]); // resetting remote history
+		//this.dsClient.emit( 'allclr', 'Clear Everything!' )
+		this.dsClient.event.emit( 'allclr', 'Clear Everything!' );
+		//this.recordPts.set('allclear',{count: this.clearCount + 1 });
 		console.log(this.recordPts.get());
+		console.log('end emit Clear -------');
 	  }
 
 	 drawLine(x0, y0, x1, y1, color, brush, emit){
@@ -395,6 +407,7 @@ export default class EspxWhiteboard extends UICorePlugin {
 
 
 	closeWB(){
+		this.drawn = false; // to handle closing wb and opening again
 		this.core.getCurrentPlayback().play();
 		this.$el.html(this.myBtnTemplate);
 		this.isBanner = false;
