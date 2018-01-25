@@ -153,15 +153,8 @@ export default class EspxWhiteboard extends UICorePlugin {
   	
   		window.addEventListener('resize', this.onResize.bind(this), false);
   		this.setupDeepstream();
-
-/*  		console.log(this.recordPts.get());
-  		console.log(this.recordPts.get( 'allpts'));
-  		if(this.recordPts.get( 'allpts')){
-  			this.points = this.recordPts.get( 'allpts');
-  		}*/
-  		this.setCanvasSize();
-  		//this.initDrawing(this.recordPts.get( 'allpts'));
-  		
+  		this.initDrawing(this.recordPts.get( 'allpts'));
+  		this.onResize();
   		//this.redrawCanvas();
   		
 	} // end setupCanvas
@@ -176,12 +169,6 @@ export default class EspxWhiteboard extends UICorePlugin {
 	    //console.log(this.canvas.width+','+this.canvas.height);
 	  }
 
-	  	  // make the canvas fill its parent
-	  setCanvasSize() {
-	    this.canvas.width  = this.core.$el[0].clientWidth;
-	    this.canvas.height = this.core.$el[0].clientHeight;
-	  }
-
 	  // ~~~~~~~~~~ DEEPSTREAM ~~~~~~~~~
 	  setupDeepstream(){
 	  	//console.log(deepstream);
@@ -189,10 +176,9 @@ export default class EspxWhiteboard extends UICorePlugin {
 	    //console.log(this.dsClient);
 	    this.recordPts = this.dsClient.record.getRecord(this.progId + '/drawing');
 	    // TODO ---
-	    this.recordPts.subscribe( 'allpts', this.initDrawing.bind(this)); // update sync'd drawing
+	    this.recordPts.subscribe( 'allpts', this.initDrawing.bind(this)); // draw initial sync'd drawing
 
-	    // use pub sub emit for all clear
-	    //this.recordPts.subscribe( 'allclear', this.clearCanvas.bind(this)); // clear whiteboard
+	    this.recordPts.subscribe( 'allclear', this.clearCanvas.bind(this), true); // clear whiteboard
 	    //this.recordPts = this.dsClient.record.getRecord('drawing');
 	    //console.log(this.recordPts);
 	    
@@ -203,20 +189,14 @@ export default class EspxWhiteboard extends UICorePlugin {
 	  }
 
 	  initDrawing(data){
-	  	console.log('initDrawing ---');
+	  	console.log('initDrawing');
 	  	if(data) this.points = data; // just syncing my complete drawing with others
 	  	if(this.drawn) {return;}
 	  	console.log(data);
  		this.redrawCanvas();
   		this.drawn = true;
 	  }// end initDrawing
-/*
-	  updateDrawing(data){
-	  	console.log('updateDrawing ---');
-	  	console.log(data);
-	  	if(data) this.points = data; // just syncing my complete drawing with others
-	  }// end initDrawing
-*/
+
 	  redrawCanvas(){
 	  	console.log('redraw canvas ----------');
 	  	//console.log(this.recordPts.get());
@@ -240,19 +220,10 @@ export default class EspxWhiteboard extends UICorePlugin {
 		// Restore the transform
 		this.context.restore();
 
-		
-
-		if( this.recordPts.get('allclear') && this.recordPts.get('allclear').count){
-			if(this.clearCount==this.recordPts.get('allclear').count){ return; }
-			this.clearCount = this.recordPts.get('allclear').count;
-		}else{
-			this.clearCount = 0;
-		}
-		//this.clearCount = this.recordPts.get('allclear').count?this.recordPts.get('allclear').count:0;
 		this.points=[]; // resetting history
 		console.log(this.recordPts.get());
 		this.recordPts.set('allpts',[]);
-		this.recordPts.set('allclear',{count: this.clearCount + 1 });
+		this.recordPts.set('allclear',{});
 		console.log(this.recordPts.get());
 	  }
 

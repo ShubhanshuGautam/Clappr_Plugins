@@ -32,6 +32,6 @@ export default {
     //uglify({}, minify), // These will make the miniaturised version of plugin -- Uncomment for prod
   ],
   targets: [
-    {dest: 'dist/EspxSocial.min.js', format: 'iife', moduleName: 'EspxSocial'},
+    {dest: 'dist/EspxWhiteboard.min.js', format: 'iife', moduleName: 'EspxWhiteboard'},
   ],
 };
