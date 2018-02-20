@@ -1,0 +1,1 @@
+Plugins for player Clappr are present under different branches
