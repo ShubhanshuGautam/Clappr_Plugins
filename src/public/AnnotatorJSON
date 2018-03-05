@@ -1,0 +1,23 @@
+1.
+{
+	time_elapsed:<time from the starting of the stream recording>,
+	action:'draw',
+	draw:'freeform',
+	data:{
+		  x0: x0 / w,
+		  y0: y0 / h,
+		  x1: x1 / w,
+		  y1: y1 / h,
+		  color: color,
+		  brush: brush
+	}
+}
+
+
+2.
+{
+	time_elapsed:<time from the starting of the stream recording>,
+	action:'draw' / 'move',
+	draw:'vector',
+	data:{ <stage, layers, groups, shapes .toJSON()> }//DeSerial done via Node.create(data)
+}
