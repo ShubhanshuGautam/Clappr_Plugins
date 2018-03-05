@@ -1,4 +1,4 @@
-## ESPxSocial Clappr Plugin
+## ESPxVideoAnnotator Clappr Plugin
 
 # Install
 Run `npm install` to install all dependencies.
