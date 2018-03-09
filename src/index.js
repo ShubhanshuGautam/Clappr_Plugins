@@ -5,11 +5,11 @@ import * as deepstream from 'deepstream.io-client-js'
 export default class EspxWhiteboard extends UICorePlugin {
 	  constructor(core) {
 	    super(core);
+	    this.firstLoad = true;
 	    // this.core is created in a super class. Hence created after this constructor finishes
 	    this.progId = core._options.prog_id;
 	    this.curMedContTime=0;
-	    this.rPos = 0;
-	    //console.log(this);
+	    this.rPos = 0; 
 	    this.isBanner = false;
 	    this.drawing = false;
 	    this.drawn = false; 
@@ -155,17 +155,17 @@ export default class EspxWhiteboard extends UICorePlugin {
   		this.current 	= { color: 'black' };
 
   		this.current.brush	= this.brushType.brush1; //default is brush1
-  		this.drawing 	= false;
+  		this.drawing 	= false; //init
 
-+  		// MOUSE EVENT LISTENERS
-+  		this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this), false);
-+		this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this), false);
-+		this.canvas.addEventListener('mouseout', this.onMouseUp.bind(this), false);
-+		this.canvas.addEventListener('mousemove', this.throttle(this.onMouseMove.bind(this), 5), false);
-+		// TOUCH EVENT LISTENERS
-+		this.canvas.addEventListener('touchstart', this.onTouchStart.bind(this), false);
-+		this.canvas.addEventListener('touchmove', this.onTouchMove.bind(this), false);
-+		this.canvas.addEventListener('touchend',  this.onTouchEnd.bind(this), false);
+  		// MOUSE EVENT LISTENERS
+  		this.canvas.addEventListener('mousedown', this.onMouseDown.bind(this), false);
+		this.canvas.addEventListener('mouseup', this.onMouseUp.bind(this), false);
+		this.canvas.addEventListener('mouseout', this.onMouseUp.bind(this), false);
+		this.canvas.addEventListener('mousemove', this.throttle(this.onMouseMove.bind(this), 5), false);
+		// TOUCH EVENT LISTENERS
+		this.canvas.addEventListener('touchstart', this.onTouchStart.bind(this), false);
+		this.canvas.addEventListener('touchmove', this.onTouchMove.bind(this), false);
+		this.canvas.addEventListener('touchend',  this.onTouchEnd.bind(this), false);
 
 		for (var i = 0; i < this.colors.length; i++){
     		this.colors[i].addEventListener('click', this.onColorUpdate.bind(this), false);
@@ -182,15 +182,10 @@ export default class EspxWhiteboard extends UICorePlugin {
 
 	  // make the canvas fill its parent
 	  onResize() {
-	  	//console.log(this.core.$el[0]);
-	    this.canvas.width  = this.core.$el[0].clientWidth;
-	    this.canvas.height = this.core.$el[0].clientHeight;
-	    this.redrawCanvas();
-
-	    //console.log(this.canvas.width+','+this.canvas.height);
+		this.setCanvasSize();
 	  }
 
-	  	  // make the canvas fill its parent
+	  // make the canvas fill its parent(Player)
 	  setCanvasSize() {
 	    this.canvas.width  = this.core.$el[0].clientWidth;
 	    this.canvas.height = this.core.$el[0].clientHeight;
@@ -426,16 +421,19 @@ export default class EspxWhiteboard extends UICorePlugin {
 	  	//this.current.brush = e.target.classname.split(' ')[1];
 	  }
 
-	  onDrawingEvent(data){
-	  	//console.log("onDrawingEvent----");
-	  	//console.log(this);
+	  //This method is called when anything LIVE is drawn
+	  onDrawingEvent(data){ 
+	  	if(this.firstLoad ) {
+	  		this.firstLoad = false;
+	  		return;
+	  	}
+	  	if(Math.abs(data.timeEl - this.curMedContTime)>1) {return;}
 	    var w = this.canvas.width;
 	    var h = this.canvas.height;
-
-	    //console.log(data);
-	    //console.log("---LINE---");
-	    //console.log(this.line);
-	    this.drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color, data.brush);
+	    if(data){
+	    	this.drawLine(data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h, data.color, data.brush);
+	    	window.setTimeout(this.eraseLine.bind(this, data.x0 * w, data.y0 * h, data.x1 * w, data.y1 * h),2000);
+		}
 	  }
 
 	    // limit the number of events per second
@@ -459,7 +457,6 @@ export default class EspxWhiteboard extends UICorePlugin {
 										'prog_id'	: this.core.getCurrentPlayback().options.prog_id
 									}));
 		this.addBackDrop();
-		//$('#svcBtn').animate({ 'width': '90%' }, 400);
 		this.isBanner = true;
 		this.setupCanvas(); // ~~~~~~~~~~~
 	}
@@ -492,16 +489,6 @@ export default class EspxWhiteboard extends UICorePlugin {
 		$('[data-play]').show();
 		$('[data-pause]').hide();
 		console.log($('[data-pause]'));
-	}
-
-	onCopyBtnClicked(){
-		this.copyToClipboard(this.core.getCurrentPlayback().options.shareURL);
-		// show URL of the source
-		alert('Link copied to clipboard : \n' + this.core.getCurrentPlayback().options.shareURL);
-		this.$el.html(this.myBtnTemplate);
-		this.isBanner = false;
-		this.removeBackDrop();
-		this.core.getCurrentPlayback().play();
 	}
 
   	addBackDrop(){
