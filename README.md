@@ -13,7 +13,7 @@ Run index.html to run the sample video.
 # Sample Usage
       p = new Clappr.Player({
         source: 'http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4',
-        ds_server:'interns.espx.cloud:8000',
+        ds_server:'127.0.0.1:6020',
         prog_id:'Happy CNY !!',
         height: 440,
         width: 640,
@@ -24,7 +24,7 @@ Run index.html to run the sample video.
 
  # Parameter option to share
  Pass `ds_server` to the player, from the html page, as an option. <br>
- For Example: `ds_server:'interns.espx.cloud:8000'`
+ For Example: `ds_server:'127.0.0.1:6020'`
  
  # Rollup Config (rollup.config.js)
    1. Comment out line: `strip({debugger: true, sourceMap: false})` to enable console.log and other debuggers to be available in compiled version of plugin.
